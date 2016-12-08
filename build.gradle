@@ -9,7 +9,7 @@ apply plugin: 'signing'
 compileJava.options.encoding = 'UTF-8'
 
 group = 'com.spring.loader'
-archivesBaseName = 's3-property-loader'
+archivesBaseName = 's3-loader'
 
 buildscript {
     repositories {

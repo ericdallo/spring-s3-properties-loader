@@ -2,6 +2,7 @@
 .settings
 .project
 .class
+.DS_Store
 .bin
 .lock
 .gradle
