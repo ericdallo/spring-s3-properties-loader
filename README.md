@@ -5,7 +5,7 @@ S3 Property Loader has the aim of allowing loading of Spring property files from
 
 Spring PropertyConfigurer replaces standard PropertyConfigurer to load property files from AWS S3 bucket. S3 path could be specified directly into spring beans.
 
-### Install
+## Install
 Gradle:
 ```groovy
 compile "com.spring.loader:s3-loader:1.0.1"
@@ -19,7 +19,7 @@ Maven:
   <type>pom</type>
 </dependency>
 ```
-### How to use
+## How to use
 
 Declare a spring bean `S3PropertyPlaceholderConfigurer` using yours AWS credencials or AWS instance profile. e.i: 
 
