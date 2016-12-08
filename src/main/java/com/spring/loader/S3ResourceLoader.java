@@ -9,11 +9,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3Object;
 
-public class S3ResourceLoader implements ResourceLoader {
+class S3ResourceLoader implements ResourceLoader {
 
 	private static final String S3_PROTOCOL_PREFIX = "s3://";
 
-	private AmazonS3 s3;
+	private final AmazonS3 s3;
 
 	public S3ResourceLoader(AWSCredentials credentials) {
 		this(new AmazonS3Client(credentials));
