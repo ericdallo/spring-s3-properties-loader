@@ -1,7 +1,6 @@
 package com.spring.loader;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +41,12 @@ public class S3PropertyPlaceholderConfigurer extends PropertyPlaceholderConfigur
 		int total = conventionalResources.size() + s3Locations.size();
 
 		if (total > 0) {
-			List<Resource> allResources = s3Locations.stream()
-					.map(resourceLoader::getResource)
-					.collect(toList());
+			List<Resource> allResources = new ArrayList<>();
+			for (String location : s3Locations) {
+				allResources.add(resourceLoader.getResource(location));
+			}
 			
-			conventionalResources.forEach(allResources::add);
+			allResources.addAll(conventionalResources);
 			
 			super.setLocations(allResources.toArray(new Resource[allResources.size()]));
 		}
