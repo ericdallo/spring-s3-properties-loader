@@ -14,14 +14,14 @@ repositories {
 }
 ```
 ```groovy
-compile "com.spring.loader:s3-loader:1.0.1"
+compile "com.spring.loader:s3-loader:1.0.2"
 ```
 Maven:
 ```xml
 <dependency>
   <groupId>com.spring.loader</groupId>
   <artifactId>s3-loader</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <type>pom</type>
 </dependency>
 ```
@@ -32,8 +32,7 @@ Declare a spring bean `S3PropertyPlaceholderConfigurer` using yours AWS credenci
 ```java
 @Bean
 S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer(AmazonS3 s3) {
-    S3ResourceLoader s3ResourceLoader = new S3ResourceLoader(s3);
-    S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer = new S3PropertyPlaceholderConfigurer(s3ResourceLoader);
+    S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer = new S3PropertyPlaceholderConfigurer(s3);
     s3PropertyPlaceholderConfigurer.setS3Locations(new String[]{"s3://my-bucket/my-folder/my-properties.properties"});
 
     return s3PropertyPlaceholderConfigurer;
