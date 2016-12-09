@@ -33,7 +33,7 @@ Declare a spring bean `S3PropertyPlaceholderConfigurer` using yours AWS credenci
 @Bean
 S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer(AmazonS3 s3) {
     S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer = new S3PropertyPlaceholderConfigurer(s3);
-    s3PropertyPlaceholderConfigurer.setS3Locations(new String[]{"s3://my-bucket/my-folder/my-properties.properties"});
+    s3PropertyPlaceholderConfigurer.setS3Locations("s3://my-bucket/my-folder/my-properties.properties");
 
     return s3PropertyPlaceholderConfigurer;
 }
