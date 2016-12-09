@@ -8,6 +8,11 @@ Spring PropertyConfigurer replaces standard PropertyConfigurer to load property 
 ## Install
 Gradle:
 ```groovy
+repositories {  
+   jcenter()  
+}
+```
+```groovy
 compile "com.spring.loader:s3-loader:1.0.1"
 ```
 Maven:
