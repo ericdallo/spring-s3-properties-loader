@@ -1,59 +1,56 @@
 package com.spring.loader;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 
+import com.amazonaws.services.s3.AmazonS3;
+
 public class S3PropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
 
 	private S3ResourceLoader resourceLoader;
-	private String[] s3Locations = new String[0];
-	private Resource[] conventionalResources = new Resource[0];
+	private List<String> s3Locations = new ArrayList<>();
+	private List<Resource> conventionalResources = new ArrayList<>();
 
 	public S3PropertyPlaceholderConfigurer(S3ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
+	
 
-	@Override
-	public void setLocations(Resource... locations) {
-		this.conventionalResources = locations;
+	public S3PropertyPlaceholderConfigurer(AmazonS3 s3) {
+		this(new S3ResourceLoader(s3));
 	}
 
-	@SuppressWarnings("deprecation")
-	public void setS3Locations(String[] s3Locations) {
-		this.s3Locations = new String[s3Locations.length];
-		for (int i = 0; i < s3Locations.length; i++) {
-			this.s3Locations[i] = parseStringValue(s3Locations[i], new Properties(), new HashSet<>());
-		}
-
+	public void setS3Locations(String...s3Locations) {
+		this.s3Locations.addAll(asList(s3Locations));
+	}
+	
+	@Override
+	public void setLocations(Resource... locations) {
+		this.conventionalResources.addAll(asList(locations));
 	}
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		injectS3Resources();
-		super.postProcessBeanFactory(beanFactory);
-	}
-
-	private void injectS3Resources() {
-		int total = conventionalResources.length + s3Locations.length;
+		int total = conventionalResources.size() + s3Locations.size();
 
 		if (total > 0) {
-			List<Resource> allResources = new ArrayList<>();
-			for (String s3Location : s3Locations) {
-				allResources.add(resourceLoader.getResource(s3Location));
-			}
-			for (Resource conventionalResource : conventionalResources) {
-				allResources.add(conventionalResource);
-			}
-
-			super.setLocations(allResources.toArray(new Resource[0]));
+			List<Resource> allResources = s3Locations.stream()
+					.map(resourceLoader::getResource)
+					.collect(toList());
+			
+			conventionalResources.forEach(allResources::add);
+			
+			super.setLocations(allResources.toArray(new Resource[allResources.size()]));
 		}
-
+		
+		super.postProcessBeanFactory(beanFactory);
 	}
 }
