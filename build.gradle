@@ -44,8 +44,8 @@ release {
 afterReleaseBuild.dependsOn publish
 
 bintray {
-    user = '${bintray_user}'
-    key = '${bintray_api_key}'
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
     configurations = ['archives']
     pkg {
         repo = 'spring-properties-loader'
