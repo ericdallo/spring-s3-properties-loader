@@ -14,27 +14,40 @@ repositories {
 }
 ```
 ```groovy
-compile "com.spring.loader:s3-loader:1.0.2"
+compile "com.spring.loader:s3-loader:1.0.3"
 ```
 Maven:
 ```xml
 <dependency>
   <groupId>com.spring.loader</groupId>
   <artifactId>s3-loader</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <type>pom</type>
 </dependency>
 ```
+
 ## How to use
 
-Declare a spring bean `S3PropertyPlaceholderConfigurer` using yours AWS credencials or AWS instance profile. e.i: 
+There 2 ways to configure your application to load properties from s3:
 
+*Anotation*
+Add this annotation to any spring managed bean
+```java
+@S3PropertiesLocation("my-bucket/my-folder/my-properties.properties")
+```
+
+*Configuration*
 ```java
 @Bean
-S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer(AmazonS3 s3) {
-    S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer = new S3PropertyPlaceholderConfigurer(s3);
+S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer(AmazonS3 amazonS3) {
+    S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer = new S3PropertyPlaceholderConfigurer(amazonS3);
     s3PropertyPlaceholderConfigurer.setS3Locations("s3://my-bucket/my-folder/my-properties.properties");
 
     return s3PropertyPlaceholderConfigurer;
 }
 ```
+
+## Requisites
+
+Official spring aws sdk lib.
+See: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
