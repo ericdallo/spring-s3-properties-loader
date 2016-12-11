@@ -30,13 +30,14 @@ Maven:
 
 There 2 ways to configure your application to load properties from s3:
 
-*Anotation*
+**Anotation**
+
 Add this annotation to any spring managed bean
 ```java
 @S3PropertiesLocation("my-bucket/my-folder/my-properties.properties")
 ```
 
-*Configuration*
+**Configuration**
 ```java
 @Bean
 S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer(AmazonS3 amazonS3) {
