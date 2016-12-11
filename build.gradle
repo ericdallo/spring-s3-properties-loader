@@ -5,6 +5,7 @@ apply plugin: 'net.researchgate.release'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'com.jfrog.bintray'
 
 compileJava.options.encoding = 'UTF-8'
 
@@ -15,10 +16,12 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath 'net.researchgate:gradle-release:2.3.5'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
     }
 }
 
@@ -39,6 +42,18 @@ release {
 }
 
 afterReleaseBuild.dependsOn publish
+
+bintray {
+    user = '${bintray_user}'
+    key = '${bintray_api_key}'
+    configurations = ['archives']
+    pkg {
+        repo = 'spring-properties-loader'
+        name = 's3-loader'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/ericdallo/spring-s3-properties-loader.git'
+    }
+}
 
 repositories {
     mavenCentral()
@@ -61,7 +76,6 @@ task sourcesJar(type: Jar) {
 
 artifacts {
     archives jar
-
     archives sourcesJar
 }
 
