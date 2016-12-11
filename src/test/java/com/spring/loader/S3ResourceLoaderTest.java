@@ -1,5 +1,6 @@
 package com.spring.loader;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,12 +9,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.spring.loader.exception.InvalidS3LocationException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class S3ResourceLoaderTest {
@@ -27,8 +28,9 @@ public class S3ResourceLoaderTest {
 	@Mock
 	private S3ObjectInputStream inputStream;
 
-	private String validLocation = "s3://mybucket/myfolder";
-	private String invalidLocation = "mybucket/myfolder";
+	private String validLocationWithPrefix = "s3://mybucket/myfolder";
+	private String validLocationWithoutPrefix = "mybucket/myfolder";
+	private String invalidLocation = "mybucket";
 	private String emptyLocation = "";
 	
 	@Before
@@ -37,33 +39,43 @@ public class S3ResourceLoaderTest {
 	}
 
 	@Test
-	public void shouldGetAValidResource() {
-		when(s3.getObject(Mockito.anyString(), Mockito.anyString())).thenReturn(s3Object);
+	public void shouldGetAValidResourceWithPrefix() {
+		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
-		subject.getResource(validLocation);
+		subject.getResource(validLocationWithPrefix);
 		
-		verify(s3).getObject(Mockito.anyString(), Mockito.anyString());
+		verify(s3).getObject(anyString(), anyString());
 	}
 	
-	@Test(expected = S3ResourceException.class)
+	@Test
+	public void shouldGetAValidResourceWithoutPrefix() {
+		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
+		when(s3Object.getObjectContent()).thenReturn(inputStream);
+		
+		subject.getResource(validLocationWithoutPrefix);
+		
+		verify(s3).getObject(anyString(), anyString());
+	}
+	
+	@Test(expected = InvalidS3LocationException.class)
 	public void shouldNotGetAValidResourceWhenLocationIsEmpty() {
-		when(s3.getObject(Mockito.anyString(), Mockito.anyString())).thenReturn(s3Object);
+		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
 		subject.getResource(emptyLocation);
 		
-		verify(s3, never()).getObject(Mockito.anyString(), Mockito.anyString());
+		verify(s3, never()).getObject(anyString(), anyString());
 	}
 	
-	@Test(expected = S3ResourceException.class)
+	@Test(expected = InvalidS3LocationException.class)
 	public void shouldNotGetAValidResourceWhenLocationIsInvald() {
-		when(s3.getObject(Mockito.anyString(), Mockito.anyString())).thenReturn(s3Object);
+		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
 		subject.getResource(invalidLocation);
 		
-		verify(s3, never()).getObject(Mockito.anyString(), Mockito.anyString());
+		verify(s3, never()).getObject(anyString(), anyString());
 	}
 
 }
