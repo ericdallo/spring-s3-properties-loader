@@ -7,17 +7,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.AliasFor;
 
 /**
  * Allow the auto configuration of the {@link S3PropertyPlaceholderConfigurer} bean.
  * 
  * @author Eric Dallo
  * @since 1.0.3
- * @see S3PropertiesLocationConfiguration
+ * @see S3PropertiesLocationRegistrar
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({S3ResourseLoaderConfiguration.class, S3PropertiesLocationConfiguration.class})
+@Import({S3ResourseLoaderConfiguration.class, S3PropertiesLocationRegistrar.class})
 @Documented
 public @interface S3PropertiesLocation {
 	
@@ -26,6 +27,16 @@ public @interface S3PropertiesLocation {
 	 * 
 	 * @return the path of aws s3 properties, e.g. my-bucket/my-folder/app.properties  
 	 */
-	String[] value();
+	@AliasFor("path")
+	String[] value() default {};
 	
+	@AliasFor("value")
+	String[] path() default {};
+	
+	/**
+	 * The profiles to load the properties in aws s3.
+	 * 
+	 * @return the profile name e.g. "prod"
+	 */
+	String[] profiles() default {};
 }

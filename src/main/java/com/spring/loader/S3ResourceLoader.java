@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.spring.loader.exception.InvalidS3LocationException;
+import com.spring.loader.exception.S3ResourceException;
 
 /**
  * Get {@link Resource} for the given aws s3 location.

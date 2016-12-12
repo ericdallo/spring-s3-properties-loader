@@ -1,4 +1,4 @@
-package com.spring.loader;
+package com.spring.loader.exception;
 
 public class S3ResourceException extends RuntimeException {
 	private static final long serialVersionUID = 8310280589629514933L;
