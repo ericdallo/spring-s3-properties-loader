@@ -25,7 +25,8 @@ public @interface S3PropertiesLocation {
 	/**
 	 * The location of the properties in aws s3.
 	 * 
-	 * @return the path of aws s3 properties, e.g. my-bucket/my-folder/app.properties  
+	 * @return the path of aws s3 properties 			e.g. "my-bucket/my-folder/app.properties"
+	 * 		   or a enviroment system to the s3 path    e.g. "${MY_BUCKET_IN_AWS_S3}"
 	 */
 	@AliasFor("path")
 	String[] value() default {};
