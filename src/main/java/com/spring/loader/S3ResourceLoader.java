@@ -16,7 +16,7 @@ import com.spring.loader.exception.S3ResourceException;
  * 
  * @author Eric Dallo
  * @since 1.0.0
- * @see S3PropertyPlaceholderConfigurer
+ * @see S3PropertySource
  */
 class S3ResourceLoader implements ResourceLoader {
 

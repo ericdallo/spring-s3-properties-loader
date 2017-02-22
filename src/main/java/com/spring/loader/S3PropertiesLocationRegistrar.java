@@ -13,13 +13,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
- * Creates the {@link S3PropertyPlaceholderConfigurer} bean.
+ * Creates the {@link S3PropertySource} bean.
  * For use with the {@link S3PropertiesLocation} annotation. 
  * 
  * @author Eric Dallo
  * @since 1.0.3
  * @see S3PropertiesLocation
- * @see S3PropertyPlaceholderConfigurer
+ * @see S3PropertySource
  */
 class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBeanDefinitionRegistrar {
 	
@@ -36,12 +36,12 @@ class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBeanDefin
 		
 		String[] locations = attributes.getStringArray("value");
 		
-		BeanDefinition bd = new RootBeanDefinition(S3PropertyPlaceholderConfigurer.class);
+		BeanDefinition bd = new RootBeanDefinition(S3PropertiesSourceConfigurer.class);
 		
 		bd.getPropertyValues().addPropertyValue("s3ResourceLoader", new RuntimeBeanReference("s3ResourceLoader")); 
 		bd.getPropertyValues().add("s3Locations", locations);
 		
-		String beanName = S3PropertyPlaceholderConfigurer.class.getSimpleName();
+		String beanName = S3PropertiesSourceConfigurer.class.getSimpleName();
 		registry.registerBeanDefinition(toLowerCase(beanName.charAt(0)) + beanName.substring(1), bd);
 	}
 
