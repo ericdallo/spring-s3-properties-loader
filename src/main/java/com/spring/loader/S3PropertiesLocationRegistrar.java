@@ -24,6 +24,16 @@ import org.springframework.core.type.AnnotationMetadata;
 class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBeanDefinitionRegistrar {
 	
 	private Environment environment;
+	private SystemPropertyResolver resolver;
+
+	public S3PropertiesLocationRegistrar() {
+		resolver = new SystemPropertyResolver();
+	}
+
+	public S3PropertiesLocationRegistrar(Environment environment, SystemPropertyResolver resolver) {
+		this.environment = environment;
+		this.resolver = resolver;
+	}
 
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
@@ -36,10 +46,16 @@ class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBeanDefin
 		
 		String[] locations = attributes.getStringArray("value");
 		
+		String[] formattedLocations = new String[locations.length]; 
+
+		for (int i = 0; i < locations.length; i++) {
+			formattedLocations[i] = resolver.getFormattedValue(locations[i]);
+		}
+		
 		BeanDefinition bd = new RootBeanDefinition(S3PropertiesSourceConfigurer.class);
 		
 		bd.getPropertyValues().addPropertyValue("s3ResourceLoader", new RuntimeBeanReference("s3ResourceLoader")); 
-		bd.getPropertyValues().add("s3Locations", locations);
+		bd.getPropertyValues().add("s3Locations", formattedLocations);
 		
 		String beanName = S3PropertiesSourceConfigurer.class.getSimpleName();
 		registry.registerBeanDefinition(toLowerCase(beanName.charAt(0)) + beanName.substring(1), bd);

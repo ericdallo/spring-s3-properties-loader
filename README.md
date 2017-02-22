@@ -32,15 +32,18 @@ There 2 ways to configure your application to load properties from s3:
 
 **Anotation**
 
-Add this annotation to any spring managed bean
+- Adding this annotation to any spring managed bean
 ```java
 @S3PropertiesLocation("my-bucket/my-folder/my-properties.properties")
 ```
-or using a specific profile to only load properties if the app is running with that profile
+- Using a specific profile to only load properties if the app is running with that profile
 ```java
 @S3PropertiesLocation(path = "my-bucket/my-folder/my-properties.properties", profiles = "production")
 ```
-
+- Load from a System env variable
+```java
+@S3PropertiesLocation(path = "${AWS_S3_LOCATION}", profiles = "production")
+```
 **Configuration**
 ```java
 @Bean
