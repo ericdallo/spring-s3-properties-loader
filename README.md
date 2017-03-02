@@ -14,23 +14,19 @@ repositories {
 }
 ```
 ```groovy
-compile "com.spring.loader:s3-loader:1.0.4"
+compile "com.spring.loader:s3-loader:2.0.0"
 ```
 Maven:
 ```xml
 <dependency>
   <groupId>com.spring.loader</groupId>
   <artifactId>s3-loader</artifactId>
-  <version>1.0.4</version>
+  <version>2.0.0</version>
   <type>pom</type>
 </dependency>
 ```
 
 ## How to use
-
-There 2 ways to configure your application to load properties from s3:
-
-**Anotation**
 
 - Adding this annotation to any spring managed bean
 ```java
@@ -42,17 +38,7 @@ There 2 ways to configure your application to load properties from s3:
 ```
 - Load from a System env variable
 ```java
-@S3PropertiesLocation(path = "${AWS_S3_LOCATION}", profiles = "production")
-```
-**Configuration**
-```java
-@Bean
-S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer(AmazonS3 amazonS3) {
-    S3PropertyPlaceholderConfigurer s3PropertyPlaceholderConfigurer = new S3PropertyPlaceholderConfigurer(amazonS3);
-    s3PropertyPlaceholderConfigurer.setS3Locations("s3://my-bucket/my-folder/my-properties.properties");
-
-    return s3PropertyPlaceholderConfigurer;
-}
+@S3PropertiesLocation(path = "${AWS_S3_LOCATION}", profiles = "developer")
 ```
 
 ## Requisites
