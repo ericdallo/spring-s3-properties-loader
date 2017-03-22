@@ -28,17 +28,47 @@ public class SystemPropertyResolverTest {
 
 	@Test
 	public void shouldGetFormattedValueWhenValueIsValid() {
-		String expected = "someValue";
+		String expected = "someBucket/someProperty.file";
 		
-		PowerMockito.when(System.getenv(Mockito.eq("AWS_S3"))).thenReturn(expected);
+		PowerMockito.when(System.getenv(Mockito.eq("AWS_S3-BUCKET.file"))).thenReturn(expected);
 		
-		String env = "${AWS_S3}";
+		String env = "${AWS_S3-BUCKET.file}";
 		
 		String formattedValue = subject.getFormattedValue(env);
 		
 		assertEquals(expected, formattedValue);
 	}
-	
+
+	@Test
+	public void shouldGetCombinedFormattedValueWhenValueIsValid() {
+		String region = "someRegion";
+		String environment = "someEnvironment";
+
+		PowerMockito.when(System.getenv(Mockito.eq("S3_BUCKET_REGION"))).thenReturn(region);
+		PowerMockito.when(System.getenv(Mockito.eq("S3_BUCKET_ENVIRONMENT"))).thenReturn(environment);
+
+		String configValue = "${S3_BUCKET_REGION}/${S3_BUCKET_ENVIRONMENT}/myApplication/application.properties";
+		String expected = String.format("%s/%s/myApplication/application.properties", region, environment);
+
+		String formattedValue = subject.getFormattedValue(configValue);
+
+		assertEquals(expected, formattedValue);
+	}
+
+	@Test
+	public void shouldReplaceMultiple() {
+		String environment = "dev";
+
+		PowerMockito.when(System.getenv(Mockito.eq("EC2_ENVIRONMENT"))).thenReturn(environment);
+
+		String configValue = "region-${EC2_ENVIRONMENT}/deploy-${EC2_ENVIRONMENT}/application.properties";
+		String expected = String.format("region-%s/deploy-%s/application.properties", environment, environment);
+
+		String formattedValue = subject.getFormattedValue(configValue);
+
+		assertEquals(expected, formattedValue);
+	}
+
 	@Test
 	public void shouldGetFormattedValueWhenValueIsValidAndNotASystemEnv() {
 		String expected = "someValue";
