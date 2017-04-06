@@ -14,6 +14,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 
 /**
  * Add a new {@link PropertySource} to spring property sources from a S3 bucket 
@@ -24,7 +25,7 @@ import org.springframework.core.env.MutablePropertySources;
  * @see S3PropertiesLocation
  * @see S3PropertySource
  */
-class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFactoryPostProcessor, PriorityOrdered {
+public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFactoryPostProcessor, PriorityOrdered {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(S3PropertiesSourceConfigurer.class);
 	
@@ -57,6 +58,7 @@ class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFactoryPostP
 			PropertiesFactoryBean propertiesFactory = new PropertiesFactoryBean();
 			MutablePropertySources propertySources = ((ConfigurableEnvironment) this.environment).getPropertySources();
 			
+			propertiesFactory.setSingleton(false);
 			for (String s3Location : s3Locations) {
 				
 				propertiesFactory.setLocation(s3ResourceLoader.getResource(s3Location));
@@ -66,6 +68,7 @@ class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFactoryPostP
 				} catch (IOException e) {
 					LOGGER.error("Could not read properties from s3Location: " + s3Location, e);
 				}
+				
 			}
 			
 		} else {
