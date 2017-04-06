@@ -1,4 +1,4 @@
-package com.spring.loader;
+package com.spring.loader.cloud;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -14,12 +14,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.spring.loader.cloud.S3Service;
 import com.spring.loader.exception.InvalidS3LocationException;
 
 @RunWith(MockitoJUnitRunner.class)
-public class S3ResourceLoaderTest {
+public class S3ServiceTest {
 	
-	private S3ResourceLoader subject;
+	private S3Service subject;
 
 	@Mock
 	private AmazonS3 s3;
@@ -35,7 +36,7 @@ public class S3ResourceLoaderTest {
 	
 	@Before
 	public void setup() {
-		subject = new S3ResourceLoader(s3);
+		subject = new S3Service(s3);
 	}
 
 	@Test
@@ -43,7 +44,7 @@ public class S3ResourceLoaderTest {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
-		subject.getResource(validLocationWithPrefix);
+		subject.retriveFrom(validLocationWithPrefix);
 		
 		verify(s3).getObject(anyString(), anyString());
 	}
@@ -53,7 +54,7 @@ public class S3ResourceLoaderTest {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
-		subject.getResource(validLocationWithoutPrefix);
+		subject.retriveFrom(validLocationWithoutPrefix);
 		
 		verify(s3).getObject(anyString(), anyString());
 	}
@@ -63,7 +64,7 @@ public class S3ResourceLoaderTest {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
-		subject.getResource(emptyLocation);
+		subject.retriveFrom(emptyLocation);
 		
 		verify(s3, never()).getObject(anyString(), anyString());
 	}
@@ -73,7 +74,7 @@ public class S3ResourceLoaderTest {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
 		
-		subject.getResource(invalidLocation);
+		subject.retriveFrom(invalidLocation);
 		
 		verify(s3, never()).getObject(anyString(), anyString());
 	}

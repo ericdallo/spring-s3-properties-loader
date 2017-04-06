@@ -1,6 +1,9 @@
-package com.spring.loader;
+package com.spring.loader.configuration;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,12 +14,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
+
+import com.spring.loader.S3PropertiesLocation;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class S3PropertiesLocationRegistrarTest {
@@ -50,7 +55,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
-		verify(registry).registerBeanDefinition(Mockito.anyString(), Mockito.any(BeanDefinition.class));
+		verify(registry, times(2)).registerBeanDefinition(anyString(), any(BeanDefinition.class));
 	}
 
 	@Test
@@ -63,7 +68,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
-		verify(registry).registerBeanDefinition(Mockito.anyString(), Mockito.any(BeanDefinition.class));
+		verify(registry, times(2)).registerBeanDefinition(anyString(), any(BeanDefinition.class));
 	}
 
 	@Test
@@ -76,7 +81,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
-		verify(registry, never()).registerBeanDefinition(Mockito.anyString(), Mockito.any(BeanDefinition.class));
+		verify(registry, never()).registerBeanDefinition(anyString(), any(BeanDefinition.class));
 	}
 
 }

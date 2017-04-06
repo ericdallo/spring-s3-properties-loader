@@ -1,4 +1,4 @@
-package com.spring.loader;
+package com.spring.loader.cloud;
 
 import java.util.Enumeration;
 import java.util.Properties;
@@ -11,7 +11,7 @@ public class S3PropertySource extends PropertySource<Object> {
 
 	private final Properties properties;
 
-	S3PropertySource (Properties properties) {
+	public S3PropertySource (Properties properties) {
 		super(S3_PROPERTY_SOURCE_NAME);
 		this.properties = properties;
 	}

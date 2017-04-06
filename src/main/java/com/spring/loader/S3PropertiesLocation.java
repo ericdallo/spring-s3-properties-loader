@@ -8,6 +8,10 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.spring.loader.configuration.S3PropertiesLocationRegistrar;
+import com.spring.loader.cloud.S3PropertySource;
+import com.spring.loader.configuration.S3PropertiesLoaderConfiguration;
+
 /**
  * Allow the auto configuration of the {@link S3PropertySource} bean.
  * 
@@ -17,7 +21,7 @@ import org.springframework.context.annotation.Import;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({ S3ResourseLoaderConfiguration.class, S3PropertiesLocationRegistrar.class })
+@Import({ S3PropertiesLoaderConfiguration.class, S3PropertiesLocationRegistrar.class })
 @Documented
 public @interface S3PropertiesLocation {
 
