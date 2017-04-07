@@ -50,6 +50,20 @@ To work, *it is only necessary* to inject the `S3PropertiesContext` bean and cal
 
 _tip_: You can create a endpoint that calls this class and refresh your application via endpoint or create a `@Scheduled` class which updates from time to time.
 
+Example:
+```java
+@RestController
+public SomeController {
+
+   @Autowired
+   private S3PropertiesContext s3PropertiesContext;
+    
+   @PostMapping("/refresh-properties")
+   public void refresh() {
+       s3PropertiesContext.refresh();
+   }
+}
+```
 ## Requisites
 
 Official [spring aws sdk lib](https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws).
