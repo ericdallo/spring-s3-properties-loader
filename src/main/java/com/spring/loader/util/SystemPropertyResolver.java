@@ -1,4 +1,4 @@
-package com.spring.loader;
+package com.spring.loader.util;
 
 import static java.lang.String.format;
 import static org.springframework.util.StringUtils.isEmpty;

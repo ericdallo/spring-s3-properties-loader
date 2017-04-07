@@ -1,4 +1,4 @@
-package com.spring.loader;
+package com.spring.loader.configuration;
 
 import java.io.IOException;
 
@@ -14,60 +14,66 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+
+import com.spring.loader.S3PropertiesLocation;
+import com.spring.loader.cloud.S3Path;
+import com.spring.loader.cloud.S3PropertySource;
+import com.spring.loader.cloud.S3ResourceLoader;
 
 /**
- * Add a new {@link PropertySource} to spring property sources from a S3 bucket 
- * For use with the {@link S3PropertiesLocation} annotation. 
- * 
+ * Add a new {@link PropertySource} to spring property sources from a S3 bucket
+ * For use with the {@link S3PropertiesLocation} annotation.
+ *
  * @author Eric Dallo
  * @since 2.0
  * @see S3PropertiesLocation
  * @see S3PropertySource
  */
-class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFactoryPostProcessor, PriorityOrdered {
+public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFactoryPostProcessor, PriorityOrdered {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(S3PropertiesSourceConfigurer.class);
-	
+
 	private Environment environment;
 	private S3ResourceLoader s3ResourceLoader;
-	private String[] s3Locations;
+	private S3Path s3Path;
 
 	public void setS3ResourceLoader(S3ResourceLoader s3ResourceLoader) {
 		this.s3ResourceLoader = s3ResourceLoader;
 	}
-	
-	public void setS3Locations(String[] s3Locations) {
-		this.s3Locations = s3Locations;
+
+	public void setS3Path(S3Path s3Path) {
+		this.s3Path = s3Path;
 	}
-	
+
 	@Override
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
 	}
-	
+
 	@Override
 	public int getOrder() {
 		return Ordered.HIGHEST_PRECEDENCE;
 	}
-	
+
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		if (this.environment instanceof ConfigurableEnvironment) {
-			
+
 			PropertiesFactoryBean propertiesFactory = new PropertiesFactoryBean();
 			MutablePropertySources propertySources = ((ConfigurableEnvironment) this.environment).getPropertySources();
-			
-			for (String s3Location : s3Locations) {
-				
-				propertiesFactory.setLocation(s3ResourceLoader.getResource(s3Location));
-				try {
-					propertiesFactory.afterPropertiesSet();
-					propertySources.addFirst(new S3PropertySource(propertiesFactory.getObject()));
-				} catch (IOException e) {
-					LOGGER.error("Could not read properties from s3Location: " + s3Location, e);
-				}
+
+			propertiesFactory.setSingleton(false);
+
+			String location = s3Path.getLocation();
+			propertiesFactory.setLocation(s3ResourceLoader.getResource(location));
+			try {
+				propertiesFactory.afterPropertiesSet();
+				propertySources.addFirst(new S3PropertySource(propertiesFactory.getObject()));
+			} catch (IOException e) {
+				LOGGER.error("Could not read properties from s3Location: " + location, e);
 			}
-			
+
 		} else {
 			LOGGER.warn("Environment is not of type '{}' property source with instance data is not available", ConfigurableEnvironment.class.getName());
 		}

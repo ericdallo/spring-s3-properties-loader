@@ -1,9 +1,6 @@
-package com.spring.loader;
+package com.spring.loader.cloud;
 
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.StringUtils;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
@@ -11,47 +8,44 @@ import com.spring.loader.exception.InvalidS3LocationException;
 import com.spring.loader.exception.S3ResourceException;
 
 /**
- * Get {@link Resource} for the given aws s3 location.
- * For use with the {@link S3PropertiesLocation} annotation. 
- * 
+ * Bridge to {@link AmazonS3} methods
+ *
  * @author Eric Dallo
- * @since 1.0.0
- * @see S3PropertySource
+ * @since 2.1
  */
-class S3ResourceLoader implements ResourceLoader {
+public class S3Service {
 
 	private static final String S3_PROTOCOL_PREFIX = "s3://";
 	private final AmazonS3 amazonS3;
-
-	S3ResourceLoader(AmazonS3 amazonS3) {
+	
+	public S3Service(AmazonS3 amazonS3) {
 		this.amazonS3 = amazonS3;
 	}
-
-	@Override
-	public Resource getResource(String location) {
-		if (StringUtils.isEmpty(location)) {
+	
+	/**
+	 * @param bucketName + key location
+	 * @return {@link S3Object} for the given aws s3 location.
+	 * @throws InvalidS3LocationException for invalid location params
+	 * @throws S3ResourceException for connection and availability errors
+	 */
+	public S3Object retriveFrom(String location) {
+		if (isEmpty(location)) {
 			throw new InvalidS3LocationException("Location cannot be empty or null");
 		}
-		
+
 		String path = location.startsWith(S3_PROTOCOL_PREFIX) ? location.substring(S3_PROTOCOL_PREFIX.length(), location.length()) : location;
-		
+
 		if(!path.contains("/")) {
 			throw new InvalidS3LocationException("The location must contains the full path of the properties file");
 		}
-		
+
 		String bucketName = path.substring(0, path.indexOf('/'));
 		String keyName = path.substring(path.indexOf('/') + 1);
-		
+
 		try {
-			S3Object s3Object = amazonS3.getObject(bucketName, keyName);
-			return new InputStreamResource(s3Object.getObjectContent(), location);
+			return amazonS3.getObject(bucketName, keyName);
 		} catch (Exception e) {
 			throw new S3ResourceException("Could not load resource from " + location, e);
 		}
-	}
-	
-	@Override
-	public ClassLoader getClassLoader() {
-		return this.getClassLoader();
 	}
 }

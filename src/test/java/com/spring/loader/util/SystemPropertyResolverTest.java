@@ -1,4 +1,4 @@
-package com.spring.loader.resolver;
+package com.spring.loader.util;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,9 +10,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.spring.loader.SystemPropertyResolver;
 import com.spring.loader.exception.EnviromentPropertyNotFoundException;
 import com.spring.loader.exception.InvalidS3LocationException;
+import com.spring.loader.util.SystemPropertyResolver;
 
 @PrepareForTest(SystemPropertyResolver.class)
 @RunWith(PowerMockRunner.class)
