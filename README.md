@@ -2,12 +2,12 @@
 # Spring S3 Property Loader
 <img align="right"  src="https://raw.githubusercontent.com/ericdallo/spring-s3-properties-loader/images/spring-icon.png?raw=true" width="120" height="120"/>
 
-S3 Property Loader has the aim of allowing loading of Spring property files from S3 bucket, in order to guarantee stateless machine configuration.
+_S3 Property Loader_ has the aim of allowing loading of Spring property files from S3 bucket, in order to guarantee stateless machine configuration.
 
-Spring PropertyConfigurer replaces standard PropertyConfigurer to load property files from AWS S3 bucket. S3 path could be specified directly into spring beans.
+Spring PropertyConfigurer uses `PropertiesFactoryBean` to load property files from *AWS S3* bucket.
 
 ## Install
-Gradle:
+_Gradle_:
 ```groovy
 repositories {  
    jcenter()  
@@ -16,7 +16,7 @@ repositories {
 ```groovy
 compile "com.spring.loader:s3-loader:2.2.0"
 ```
-Maven:
+_Maven_:
 ```xml
 <dependency>
   <groupId>com.spring.loader</groupId>
@@ -43,7 +43,17 @@ or
 @S3PropertiesLocation(value = "${AWS_S3_BUCKET}/application/my.properties", profiles = "developer")
 ```
 
+### Refreshing properties in runtime
+
+You can force your application to load properties from S3 again without restart. _S3 Properties Loader_ uses a [Spring Cloud](http://projects.spring.io/spring-cloud/) feature that allows the spring beans annotated with `@RefreshScope` to reload properties.
+To work, *it is only necessary* to inject the `S3PropertiesContext` bean and call `refresh()` method. After this, _S3 Properties Loader_ will get properties again from s3 bucket defined previously and refresh your beans annotated with `@RefreshScope`.
+
+_tip_: You can create a endpoint that calls this class and refresh your application via endpoint or create a `@Scheduled` class which updates from time to time.
+
 ## Requisites
 
-Official spring aws sdk lib.
-See: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
+Official [spring aws sdk lib](https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws).
+
+## Problems and Issues
+
+Found some bug? Have some enhancement ? Open a Issue [here](https://github.com/ericdallo/spring-s3-properties-loader/issues)
