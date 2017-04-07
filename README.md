@@ -34,11 +34,13 @@ Maven:
 ```
 - Using a specific profile to only load properties if the app is running with that profile
 ```java
-@S3PropertiesLocation(path = "my-bucket/my-folder/my-properties.properties", profiles = "production")
+@S3PropertiesLocation(value = "my-bucket/my-folder/my-properties.properties", profiles = "production")
 ```
 - Load from a System env variable
 ```java
-@S3PropertiesLocation(path = "${AWS_S3_LOCATION}", profiles = "developer")
+@S3PropertiesLocation(value = "${AWS_S3_LOCATION}", profiles = "developer")
+or
+@S3PropertiesLocation(value = "${AWS_S3_BUCKET}/application/my.properties", profiles = "developer")
 ```
 
 ## Requisites
