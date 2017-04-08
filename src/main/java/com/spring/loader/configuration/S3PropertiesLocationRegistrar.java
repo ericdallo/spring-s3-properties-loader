@@ -1,7 +1,6 @@
 package com.spring.loader.configuration;
 
 import static com.spring.loader.util.WordUtils.classNameloweredCaseFirstLetter;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -14,7 +13,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import com.spring.loader.S3PropertiesLocation;
-import com.spring.loader.cloud.S3Path;
 import com.spring.loader.cloud.S3PropertySource;
 import com.spring.loader.util.SystemPropertyResolver;
 
@@ -58,15 +56,9 @@ public class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBe
 			formattedLocations[i] = resolver.getFormattedValue(locations[i]);
 		}
 
-		BeanDefinition locationDefinition = new RootBeanDefinition(S3Path.class);
-		locationDefinition.getPropertyValues().add("location", formattedLocations);
-		locationDefinition.setScope(SCOPE_SINGLETON);
-
-		registry.registerBeanDefinition(classNameloweredCaseFirstLetter(S3Path.class), locationDefinition);
-
 		BeanDefinition configurerDefinition = new RootBeanDefinition(S3PropertiesSourceConfigurer.class);
 		configurerDefinition.getPropertyValues().addPropertyValue("s3ResourceLoader", new RuntimeBeanReference("s3ResourceLoader"));
-		configurerDefinition.getPropertyValues().add("s3Path", new RuntimeBeanReference("s3Path"));
+		configurerDefinition.getPropertyValues().add("locations", formattedLocations);
 
 		registry.registerBeanDefinition(classNameloweredCaseFirstLetter(S3PropertiesSourceConfigurer.class), configurerDefinition);
 	}

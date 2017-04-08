@@ -3,7 +3,6 @@ package com.spring.loader.configuration;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +54,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
-		verify(registry, times(2)).registerBeanDefinition(anyString(), any(BeanDefinition.class));
+		verify(registry).registerBeanDefinition(anyString(), any(BeanDefinition.class));
 	}
 
 	@Test
@@ -68,7 +67,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
-		verify(registry, times(2)).registerBeanDefinition(anyString(), any(BeanDefinition.class));
+		verify(registry).registerBeanDefinition(anyString(), any(BeanDefinition.class));
 	}
 
 	@Test

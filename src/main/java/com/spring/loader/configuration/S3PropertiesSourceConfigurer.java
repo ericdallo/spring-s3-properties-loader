@@ -15,9 +15,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.Resource;
 
 import com.spring.loader.S3PropertiesLocation;
-import com.spring.loader.cloud.S3Path;
 import com.spring.loader.cloud.S3PropertySource;
 import com.spring.loader.cloud.S3ResourceLoader;
 
@@ -36,16 +36,16 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 
 	private Environment environment;
 	private S3ResourceLoader s3ResourceLoader;
-	private S3Path s3Path;
+	private String[] locations;
 
 	public void setS3ResourceLoader(S3ResourceLoader s3ResourceLoader) {
 		this.s3ResourceLoader = s3ResourceLoader;
 	}
-
-	public void setS3Path(S3Path s3Path) {
-		this.s3Path = s3Path;
+	
+	public void setLocations(String[] locations) {
+		this.locations = locations;
 	}
-
+	
 	@Override
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
@@ -65,13 +65,19 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 
 			propertiesFactory.setSingleton(false);
 
-			String location = s3Path.getLocation();
-			propertiesFactory.setLocation(s3ResourceLoader.getResource(location));
+			Resource[] resources = new Resource[locations.length];
+			
+			for (int i = 0; i < locations.length; i++) {
+				resources[i] = s3ResourceLoader.getResource(locations[i]);
+			}
+			
+			propertiesFactory.setLocations(resources);
+			
 			try {
 				propertiesFactory.afterPropertiesSet();
 				propertySources.addFirst(new S3PropertySource(propertiesFactory.getObject()));
 			} catch (IOException e) {
-				LOGGER.error("Could not read properties from s3Location: " + location, e);
+				LOGGER.error("Could not read properties from s3Location", e);
 			}
 
 		} else {
