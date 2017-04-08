@@ -49,7 +49,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = 'spring-properties-loader'
-        name = 's3-loader'
+        name = 'spring-s3-properties-loader'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/ericdallo/spring-s3-properties-loader.git'
     }
