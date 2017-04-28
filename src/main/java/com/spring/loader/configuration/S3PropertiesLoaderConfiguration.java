@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.spring.loader.cloud.S3PropertiesContext;
-import com.spring.loader.cloud.S3ResourceLoader;
+import com.spring.loader.cloud.S3StreamLoader;
 import com.spring.loader.cloud.S3Service;
 
 @Configuration
@@ -20,8 +20,8 @@ public class S3PropertiesLoaderConfiguration {
 	}
 	
 	@Bean
-	S3ResourceLoader s3ResourceLoader(S3Service s3Service) {
-		return new S3ResourceLoader(s3Service);
+	S3StreamLoader s3ResourceLoader(S3Service s3Service) {
+		return new S3StreamLoader(s3Service);
 	}
 
 	@Bean
