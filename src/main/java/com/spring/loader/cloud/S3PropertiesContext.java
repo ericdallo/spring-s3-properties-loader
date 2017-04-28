@@ -2,6 +2,7 @@ package com.spring.loader.cloud;
 
 import static org.springframework.util.ClassUtils.getUserClass;
 
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -58,10 +59,11 @@ public class S3PropertiesContext {
 				S3Object s3Object = s3Service.retriveFrom(location);
 
 				properties.load(s3Object.getObjectContent());
-				properties.forEach((key, value) -> {
-					LOGGER.debug("Loading property '{}={}'", key, value);
-					environment.setProperty(key.toString(), key.toString());
-				});
+
+				for (Entry<Object, Object> entry : properties.entrySet()) {
+					LOGGER.debug("Loading property '{}={}'", entry.getKey(), entry.getValue());
+					environment.setProperty(entry.getKey().toString(), entry.getValue().toString());
+				}
 			}
 
 			LOGGER.info("Refreshing properties retrieved from S3");

@@ -1,6 +1,7 @@
 package com.spring.loader.configuration;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -76,7 +77,9 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 				}
 				propertiesToAdd[i] = properties;
 
-				properties.forEach((key, value) -> LOGGER.debug("Loading property '{}={}'", key, value));
+				for (Entry<Object, Object> entry : properties.entrySet()) {
+					LOGGER.debug("Loading property '{}={}'", entry.getKey(), entry.getValue());
+				}
 			}
 
 			propertiesFactory.setPropertiesArray(propertiesToAdd);
