@@ -3,15 +3,15 @@ package com.spring.loader.util;
 import static java.lang.String.format;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import com.spring.loader.exception.EnviromentPropertyNotFoundException;
-import com.spring.loader.exception.InvalidS3LocationException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.spring.loader.exception.EnviromentPropertyNotFoundException;
+import com.spring.loader.exception.InvalidS3LocationException;
+
 /**
- * Resolver for properties that will be retrieved from system environment. 
- * 
+ * Resolver for properties that will be retrieved from system environment.
+ *
  * @author Eric Dallo
  * @since 2.0
  */
@@ -40,15 +40,19 @@ public class SystemPropertyResolver {
 
 			return bucket;
 		}
-		
+
 		return value;
 	}
 
 	private String getFromEnv(String key) {
-		String valueFromEnv = System.getenv(key);
+		String valueFromEnv = System.getProperty(key);
 
 		if (isEmpty(valueFromEnv)) {
-			throw new EnviromentPropertyNotFoundException(format("Environment variable %s not found in system", key));
+			valueFromEnv = System.getenv(key);
+
+			if (isEmpty(valueFromEnv)) {
+				throw new EnviromentPropertyNotFoundException(format("Environment variable %s not found in system and java properties", key));
+			}
 		}
 
 		return valueFromEnv;
