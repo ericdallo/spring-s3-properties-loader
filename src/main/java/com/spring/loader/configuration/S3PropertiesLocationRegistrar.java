@@ -2,6 +2,8 @@ package com.spring.loader.configuration;
 
 import static com.spring.loader.util.WordUtils.classNameloweredCaseFirstLetter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -27,6 +29,8 @@ import com.spring.loader.util.SystemPropertyResolver;
  */
 public class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBeanDefinitionRegistrar {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(S3PropertiesLocationRegistrar.class);
+
 	private Environment environment;
 	private SystemPropertyResolver resolver;
 
@@ -45,6 +49,7 @@ public class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBe
 		String[] profiles = attributes.getStringArray("profiles");
 
 		if (profiles.length > 0 && !environment.acceptsProfiles(profiles)) {
+			LOGGER.warn("S3 Properties not loaded. Current application profile: {}. Acceptable profiles: {}", environment.getActiveProfiles(), profiles);
 			return;
 		}
 

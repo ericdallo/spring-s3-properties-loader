@@ -68,6 +68,8 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 
 			Properties[] propertiesToAdd = new Properties[locations.length];
 
+			LOGGER.info("Starting to load properties from S3 into application");
+
 			for (int i = 0; i < locations.length; i++) {
 				Properties properties = new Properties();
 				try {
@@ -87,7 +89,7 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 			try {
 				propertiesFactory.afterPropertiesSet();
 				propertySources.addFirst(new S3PropertySource(propertiesFactory.getObject()));
-				
+
 				LOGGER.info("Successfully loaded properties from S3 into application");
 			} catch (IOException e) {
 				LOGGER.error("Could not read properties from s3Location", e);
