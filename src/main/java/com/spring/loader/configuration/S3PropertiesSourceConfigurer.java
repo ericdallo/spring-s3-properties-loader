@@ -58,7 +58,7 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 	}
 
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void postProcessBeanFactory(@SuppressWarnings("unused") ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		if (this.environment instanceof ConfigurableEnvironment) {
 
 			PropertiesFactoryBean propertiesFactory = new PropertiesFactoryBean();
@@ -76,6 +76,9 @@ public class S3PropertiesSourceConfigurer implements EnvironmentAware, BeanFacto
 					properties.load(s3ResourceLoader.getProperty(locations[i]));
 				} catch (IOException e) {
 					LOGGER.error("Could not load properties from location " + locations[i], e);
+				} catch (Exception e) {
+					LOGGER.error("Error on loading properties from location: " + locations[i], e);
+					return;
 				}
 				propertiesToAdd[i] = properties;
 
