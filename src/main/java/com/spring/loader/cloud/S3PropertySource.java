@@ -1,11 +1,11 @@
 package com.spring.loader.cloud;
 
-import java.util.Enumeration;
 import java.util.Properties;
 
-import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.lang.Nullable;
 
-public class S3PropertySource extends PropertySource<Object> {
+public class S3PropertySource extends EnumerablePropertySource<Object> {
 	
 	private static final String S3_PROPERTY_SOURCE_NAME = "s3PropertySource";
 
@@ -17,11 +17,18 @@ public class S3PropertySource extends PropertySource<Object> {
 	}
 
 	@Override
+	@Nullable
 	public Object getProperty(String name) {
-		return properties.get(name);
+		return this.properties.get(name);
 	}
 
-	public Enumeration<?> keys() {
-		return properties.propertyNames();
+	@Override
+	public boolean containsProperty(String name) {
+		return this.properties.containsKey(name);
+	}
+
+	@Override
+	public String[] getPropertyNames() {
+		return this.properties.keySet().toArray(new String[this.properties.size()]);
 	}
 }
