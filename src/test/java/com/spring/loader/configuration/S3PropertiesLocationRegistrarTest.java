@@ -1,7 +1,7 @@
 package com.spring.loader.configuration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,10 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.type.AnnotationMetadata;
 
 import com.spring.loader.S3PropertiesLocation;
@@ -63,7 +64,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		attributes.put("profiles", profiles);
 
-		when(environment.acceptsProfiles(profiles)).thenReturn(true);
+		when(environment.acceptsProfiles(Profiles.of(profiles))).thenReturn(true);
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
@@ -76,7 +77,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		attributes.put("profiles", profiles);
 
-		when(environment.acceptsProfiles(profiles)).thenReturn(false);
+		when(environment.acceptsProfiles(Profiles.of(profiles))).thenReturn(false);
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 

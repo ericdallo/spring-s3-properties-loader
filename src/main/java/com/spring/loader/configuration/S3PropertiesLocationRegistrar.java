@@ -12,6 +12,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.type.AnnotationMetadata;
 
 import com.spring.loader.S3PropertiesLocation;
@@ -48,7 +49,7 @@ public class S3PropertiesLocationRegistrar implements EnvironmentAware, ImportBe
 		AnnotationAttributes attributes = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(S3PropertiesLocation.class.getName()));
 		String[] profiles = attributes.getStringArray("profiles");
 
-		if (profiles.length > 0 && !environment.acceptsProfiles(profiles)) {
+		if (profiles.length > 0 && !environment.acceptsProfiles(Profiles.of(profiles))) {
 			LOGGER.warn("S3 Properties not loaded. Current application profile: {}. Acceptable profiles: {}", environment.getActiveProfiles(), profiles);
 			return;
 		}

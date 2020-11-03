@@ -1,6 +1,6 @@
 package com.spring.loader.cloud;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,15 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.spring.loader.cloud.S3Service;
 import com.spring.loader.exception.InvalidS3LocationException;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class S3ServiceTest {
 	
 	private S3Service subject;
@@ -58,7 +57,7 @@ public class S3ServiceTest {
 		
 		verify(s3).getObject(anyString(), anyString());
 	}
-	
+
 	@Test(expected = InvalidS3LocationException.class)
 	public void shouldNotGetAValidResourceWhenLocationIsEmpty() {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
