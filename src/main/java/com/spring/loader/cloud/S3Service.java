@@ -1,11 +1,10 @@
 package com.spring.loader.cloud;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.spring.loader.exception.InvalidS3LocationException;
 import com.spring.loader.exception.S3ResourceException;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Bridge to {@link AmazonS3} methods
@@ -23,13 +22,13 @@ public class S3Service {
 	}
 	
 	/**
-	 * @param bucketName + key location
+	 * @param location bucketName + key location
 	 * @return {@link S3Object} for the given aws s3 location.
 	 * @throws InvalidS3LocationException for invalid location params
 	 * @throws S3ResourceException for connection and availability errors
 	 */
 	public S3Object retriveFrom(String location) {
-		if (isEmpty(location)) {
+		if (ObjectUtils.isEmpty(location)) {
 			throw new InvalidS3LocationException("Location cannot be empty or null");
 		}
 

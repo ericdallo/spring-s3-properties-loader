@@ -43,7 +43,7 @@ public class S3PropertiesLocationRegistrarTest {
 		subject.setEnvironment(environment);
 
 		attributes = new HashMap<>();
-		attributes.put("path", new String[] { "my-bucket/my.properties" });
+		attributes.put("path", new String[] { "my-bucket/my.yaml" });
 		attributes.put("value", new String[] { "my-bucket/my.properties" });
 
 		when(importingClassMetadata.getAnnotationAttributes(S3PropertiesLocation.class.getName())).thenReturn(attributes);

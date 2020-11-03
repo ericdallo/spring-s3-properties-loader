@@ -1,0 +1,14 @@
+zuul:
+  routes:
+    query1:
+      path: /api/apps/test1/query/**
+      stripPrefix: false
+      url: "https://test.url.com/query1"
+    query2:
+      path: /api/apps/test2/query/**
+      stripPrefix: false
+      url: "https://test.url.com/query2"
+    index1:
+      path: /api/apps/*/index/**
+      stripPrefix: false
+      url: "https://test.url.com/index"

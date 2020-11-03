@@ -18,9 +18,9 @@ public class S3PropertySource extends PropertySource<Object> {
 
 	@Override
 	public Object getProperty(String name) {
-		return properties.get(name); 
+		return properties.get(name);
 	}
-	
+
 	public Enumeration<?> keys() {
 		return properties.propertyNames();
 	}
