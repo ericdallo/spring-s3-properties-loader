@@ -1,13 +1,13 @@
 package com.spring.loader.util;
 
 import static java.lang.String.format;
-import static org.springframework.util.StringUtils.isEmpty;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.spring.loader.exception.EnviromentPropertyNotFoundException;
 import com.spring.loader.exception.InvalidS3LocationException;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Resolver for properties that will be retrieved from system environment.
@@ -20,7 +20,7 @@ public class SystemPropertyResolver {
 	private static final String SYSTEM_NOTATION_PREFIX = "${";
 
 	public String getFormattedValue(String value) {
-		if (isEmpty(value)) {
+		if (ObjectUtils.isEmpty(value)) {
 			throw new InvalidS3LocationException("The location cannot be empty or null");
 		}
 
@@ -47,10 +47,10 @@ public class SystemPropertyResolver {
 	private String getFromEnv(String key) {
 		String valueFromEnv = System.getProperty(key);
 
-		if (isEmpty(valueFromEnv)) {
+		if (ObjectUtils.isEmpty(valueFromEnv)) {
 			valueFromEnv = System.getenv(key);
 
-			if (isEmpty(valueFromEnv)) {
+			if (ObjectUtils.isEmpty(valueFromEnv)) {
 				throw new EnviromentPropertyNotFoundException(format("Environment variable %s not found in system and java properties", key));
 			}
 		}
