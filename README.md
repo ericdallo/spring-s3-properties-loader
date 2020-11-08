@@ -14,14 +14,14 @@ repositories {
 }
 ```
 ```groovy
-compile "com.spring.loader:s3-loader:2.2.2"
+compile "com.spring.loader:s3-loader:3.0.0"
 ```
 _Maven_:
 ```xml
 <dependency>
   <groupId>com.spring.loader</groupId>
   <artifactId>s3-loader</artifactId>
-  <version>2.2.2</version>
+  <version>3.0.0</version>
   <type>pom</type>
 </dependency>
 ```
