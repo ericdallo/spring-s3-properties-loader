@@ -9,11 +9,11 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
@@ -23,7 +23,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import com.spring.loader.S3PropertiesLocation;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class S3PropertiesLocationRegistrarTest {
 
 	private S3PropertiesLocationRegistrar subject;
@@ -37,7 +37,7 @@ public class S3PropertiesLocationRegistrarTest {
 	@Mock
 	private BeanDefinitionRegistry registry;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		subject = new S3PropertiesLocationRegistrar();
 		subject.setEnvironment(environment);

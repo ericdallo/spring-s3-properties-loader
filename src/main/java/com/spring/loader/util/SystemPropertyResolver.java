@@ -29,7 +29,7 @@ public class SystemPropertyResolver {
 			String pattern = "\\$\\{([A-Za-z0-9_]+)\\}";
 			Matcher matcher = Pattern.compile(pattern).matcher(bucket);
 			while (matcher.find()) {
-				String envValue = getFromEnv(matcher.group(1));
+				String envValue = getFromPropOrEnv(matcher.group(1));
 				Pattern subExpression = Pattern.compile(Pattern.quote(matcher.group(0)));
 				bucket = subExpression.matcher(bucket).replaceAll(envValue);
 			}
@@ -44,11 +44,11 @@ public class SystemPropertyResolver {
 		return value;
 	}
 
-	private String getFromEnv(String key) {
+	String getFromPropOrEnv(String key) {
 		String valueFromEnv = System.getProperty(key);
 
 		if (ObjectUtils.isEmpty(valueFromEnv)) {
-			valueFromEnv = System.getenv(key);
+			valueFromEnv = getFromEnv(key);
 
 			if (ObjectUtils.isEmpty(valueFromEnv)) {
 				throw new EnviromentPropertyNotFoundException(format("Environment variable %s not found in system and java properties", key));
@@ -57,4 +57,6 @@ public class SystemPropertyResolver {
 
 		return valueFromEnv;
 	}
+
+	String getFromEnv(String key) { return key == null ? null : System.getenv(key); }
 }

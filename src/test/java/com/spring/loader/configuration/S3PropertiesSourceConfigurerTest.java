@@ -1,17 +1,19 @@
 package com.spring.loader.configuration;
 
 import com.spring.loader.cloud.S3StreamLoader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class S3PropertiesSourceConfigurerTest {
 
     @Mock
@@ -19,7 +21,7 @@ public class S3PropertiesSourceConfigurerTest {
 
     private S3PropertiesSourceConfigurer s3PropertiesSourceConfigurer;
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         when(s3StreamLoader.getProperty("external-config.properties"))
@@ -42,7 +44,6 @@ public class S3PropertiesSourceConfigurerTest {
         assertEquals(properties.size(), yamlProperties.size());
 
         yamlProperties.keySet().forEach((key) ->
-                assertEquals("Value mismatch for key '" + key + "';",
-                        yamlProperties.getProperty(key.toString()), properties.getProperty(key.toString())));
+                assertEquals(yamlProperties.getProperty(key.toString()), properties.getProperty(key.toString())));
     }
 }

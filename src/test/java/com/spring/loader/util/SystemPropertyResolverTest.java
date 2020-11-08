@@ -1,35 +1,29 @@
 package com.spring.loader.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static org.mockito.Mockito.when;
 
 import com.spring.loader.exception.EnviromentPropertyNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import com.spring.loader.exception.InvalidS3LocationException;
 
-@PrepareForTest(SystemPropertyResolver.class)
-@RunWith(PowerMockRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SystemPropertyResolverTest {
 
-	private SystemPropertyResolver subject;
-
-	@Before
-	public void setup() {
-		subject = new SystemPropertyResolver();
-		PowerMockito.mockStatic(System.class);
-	}
+	@Spy
+	SystemPropertyResolver subject = new SystemPropertyResolver();
 
 	@Test
 	public void shouldGetFormattedValueWhenValueIsValid() {
 		String expected = "someValue";
 
-		PowerMockito.when(System.getenv(eq("AWS_S3"))).thenReturn(expected);
+		when(subject.getFromEnv("AWS_S3")).thenReturn(expected);
 
 		String env = "${AWS_S3}";
 
@@ -42,7 +36,7 @@ public class SystemPropertyResolverTest {
 	public void shouldGetFormattedValueFromPropertiesWhenValueIsValid() {
 		String expected = "someValue";
 
-		PowerMockito.when(System.getProperty(eq("AWS_S3"))).thenReturn(expected);
+		when(subject.getFromEnv("AWS_S3")).thenReturn(expected);
 
 		String env = "${AWS_S3}";
 
@@ -56,8 +50,8 @@ public class SystemPropertyResolverTest {
 		String region = "someRegion";
 		String environment = "someEnvironment";
 
-		PowerMockito.when(System.getenv(eq("S3_BUCKET_REGION"))).thenReturn(region);
-		PowerMockito.when(System.getenv(eq("S3_BUCKET_ENVIRONMENT"))).thenReturn(environment);
+		when(subject.getFromEnv("S3_BUCKET_REGION")).thenReturn(region);
+		when(subject.getFromEnv("S3_BUCKET_ENVIRONMENT")).thenReturn(environment);
 
 		String configValue = "${S3_BUCKET_REGION}/${S3_BUCKET_ENVIRONMENT}/myApplication/application.properties";
 		String expected = String.format("%s/%s/myApplication/application.properties", region, environment);
@@ -71,7 +65,7 @@ public class SystemPropertyResolverTest {
 	public void shouldReplaceMultiple() {
 		String environment = "dev";
 
-		PowerMockito.when(System.getenv(eq("EC2_ENVIRONMENT"))).thenReturn(environment);
+		when(subject.getFromEnv("EC2_ENVIRONMENT")).thenReturn(environment);
 
 		String configValue = "region-${EC2_ENVIRONMENT}/deploy-${EC2_ENVIRONMENT}/application.properties";
 		String expected = String.format("region-%s/deploy-%s/application.properties", environment, environment);
@@ -90,27 +84,27 @@ public class SystemPropertyResolverTest {
 		assertEquals(expected, formattedValue);
 	}
 
-	@Test(expected = InvalidS3LocationException.class)
+	@Test
 	public void shouldNotGetFormattedValueWhenValueIsEmpty() {
 		String expected = "";
 
-		subject.getFormattedValue(expected);
+		assertThrows(InvalidS3LocationException.class, () -> subject.getFormattedValue(expected));
 	}
 
-	@Test(expected = InvalidS3LocationException.class)
+	@Test
 	public void shouldNotGetFormattedValueWhenValueHasAInvalidSyntax() {
 		String expected = "${AWS_S3";
 
-		subject.getFormattedValue(expected);
+		assertThrows(InvalidS3LocationException.class, () -> subject.getFormattedValue(expected));
 	}
 
-	@Test(expected = EnviromentPropertyNotFoundException.class)
+	@Test
 	public void shouldNotGetFormattedValueWhenSystemDoesNotHasTheEnvironmentVariable() {
-		PowerMockito.when(System.getenv(eq("AWS_S3"))).thenReturn(null);
+		when(subject.getFromEnv(eq("AWS_S3"))).thenReturn(null);
 
 		String env = "${AWS_S3}";
 
-		subject.getFormattedValue(env);
+		assertThrows(EnviromentPropertyNotFoundException.class, () -> subject.getFormattedValue(env));
 	}
 
 }

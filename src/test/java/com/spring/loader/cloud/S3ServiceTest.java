@@ -1,22 +1,26 @@
 package com.spring.loader.cloud;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.spring.loader.exception.InvalidS3LocationException;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class S3ServiceTest {
 	
 	private S3Service subject;
@@ -33,7 +37,7 @@ public class S3ServiceTest {
 	private String invalidLocation = "mybucket";
 	private String emptyLocation = "";
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		subject = new S3Service(s3);
 	}
@@ -58,22 +62,22 @@ public class S3ServiceTest {
 		verify(s3).getObject(anyString(), anyString());
 	}
 
-	@Test(expected = InvalidS3LocationException.class)
+	@Test
 	public void shouldNotGetAValidResourceWhenLocationIsEmpty() {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
-		
-		subject.retriveFrom(emptyLocation);
+
+		assertThrows(InvalidS3LocationException.class, () -> subject.retriveFrom(emptyLocation));
 		
 		verify(s3, never()).getObject(anyString(), anyString());
 	}
 	
-	@Test(expected = InvalidS3LocationException.class)
+	@Test
 	public void shouldNotGetAValidResourceWhenLocationIsInvald() {
 		when(s3.getObject(anyString(), anyString())).thenReturn(s3Object);
 		when(s3Object.getObjectContent()).thenReturn(inputStream);
-		
-		subject.retriveFrom(invalidLocation);
+
+		assertThrows(InvalidS3LocationException.class, () -> subject.retriveFrom(invalidLocation));
 		
 		verify(s3, never()).getObject(anyString(), anyString());
 	}
