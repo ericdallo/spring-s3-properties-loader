@@ -1,7 +1,7 @@
 package com.spring.loader.configuration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,20 +9,21 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.type.AnnotationMetadata;
 
 import com.spring.loader.S3PropertiesLocation;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class S3PropertiesLocationRegistrarTest {
 
 	private S3PropertiesLocationRegistrar subject;
@@ -36,13 +37,13 @@ public class S3PropertiesLocationRegistrarTest {
 	@Mock
 	private BeanDefinitionRegistry registry;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		subject = new S3PropertiesLocationRegistrar();
 		subject.setEnvironment(environment);
 
 		attributes = new HashMap<>();
-		attributes.put("path", new String[] { "my-bucket/my.properties" });
+		attributes.put("path", new String[] { "my-bucket/my.yaml" });
 		attributes.put("value", new String[] { "my-bucket/my.properties" });
 
 		when(importingClassMetadata.getAnnotationAttributes(S3PropertiesLocation.class.getName())).thenReturn(attributes);
@@ -63,7 +64,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		attributes.put("profiles", profiles);
 
-		when(environment.acceptsProfiles(profiles)).thenReturn(true);
+		when(environment.acceptsProfiles(Profiles.of(profiles))).thenReturn(true);
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 
@@ -76,7 +77,7 @@ public class S3PropertiesLocationRegistrarTest {
 
 		attributes.put("profiles", profiles);
 
-		when(environment.acceptsProfiles(profiles)).thenReturn(false);
+		when(environment.acceptsProfiles(Profiles.of(profiles))).thenReturn(false);
 
 		subject.registerBeanDefinitions(importingClassMetadata, registry);
 

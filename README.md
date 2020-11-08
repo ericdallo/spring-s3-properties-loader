@@ -30,7 +30,7 @@ _Maven_:
 
 - Adding this annotation to any spring managed bean
 ```java
-@S3PropertiesLocation("my-bucket/my-folder/my-properties.properties")
+@S3PropertiesLocation("my-bucket/my-folder/my-properties.yaml")
 ```
 - Using a specific profile to only load properties if the app is running with that profile
 ```java
@@ -39,8 +39,111 @@ _Maven_:
 - Load from a System env variable
 ```java
 @S3PropertiesLocation(value = "${AWS_S3_LOCATION}", profiles = "developer")
-or
+// or
 @S3PropertiesLocation(value = "${AWS_S3_BUCKET}/application/my.properties", profiles = "developer")
+```
+
+### Binding properties to a POJO
+You can bind the externally loaded properties to a POJO as well.
+
+For e.g., if you have a YAML file as
+```yaml
+zuul:
+  routes:
+    query1:
+      path: /api/apps/test1/query/**
+      stripPrefix: false
+      url: "https://test.url.com/query1"
+    query2:
+      path: /api/apps/test2/query/**
+      stripPrefix: false
+      url: "https://test.url.com/query2"
+    index1:
+      path: /api/apps/*/index/**
+      stripPrefix: false
+      url: "https://test.url.com/index"
+```
+Then you can bind the properties to a POJO using ConfigurationProperties:
+```java
+@Component
+@ConfigurationProperties("zuul")
+public class RouteConfig {
+    private Map<String, Map<String, String>> routes = new HashMap<>();
+
+    public void setRoutes(Map<String, Map<String, String>> routes) {
+        this.routes = routes;
+    }
+
+    public Map<String, Map<String, String>> getRoutes() {
+        return routes;
+    }
+}
+
+// or
+
+@Component
+@ConfigurationProperties("zuul")
+public class RouteConfig {
+    private Map<String, Route> routes;
+
+    public void setRoutes(Map<String, Route> routes) {
+        this.routes = routes;
+    }
+
+    public Map<String, Route> getRoutes() {
+        return routes;
+    }
+
+    public static class Route {
+        private String path;
+        private boolean stripPrefix;
+        String url;
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public boolean isStripPrefix() {
+            return stripPrefix;
+        }
+
+        public void setStripPrefix(boolean stripPrefix) {
+            this.stripPrefix = stripPrefix;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return new ObjectMapper().writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return this.toString();
+        }
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return this.toString();
+    }
+}
 ```
 
 ### Refreshing properties in runtime
