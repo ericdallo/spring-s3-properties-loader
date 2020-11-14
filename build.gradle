@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 plugins {
     id 'java'
     id 'eclipse'
@@ -7,6 +9,11 @@ plugins {
     id 'maven'
     id 'signing'
     id 'com.jfrog.bintray' version '1.8.5'
+
+    id 'org.springframework.boot' version '2.3.5.RELEASE' apply false
+
+    // for separating out unit and integration tests
+    id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -50,6 +57,8 @@ repositories {
 }
 
 dependencies {
+//    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
     implementation "org.springframework:spring-context:5.3.0"
     implementation "org.springframework.cloud:spring-cloud-aws-core:2.2.4.RELEASE"
     implementation "org.springframework.cloud:spring-cloud-context:2.2.5.RELEASE"
@@ -61,6 +70,14 @@ dependencies {
     testImplementation "org.mockito:mockito-inline:3.6.0"
     testImplementation "org.mockito:mockito-junit-jupiter:3.6.0"
     testRuntimeOnly "org.yaml:snakeyaml:1.27"
+
+    testImplementation enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)
+    testImplementation 'cloud.localstack:localstack-utils:0.2.5'
+    testImplementation 'com.amazonaws:aws-java-sdk-s3:1.11.896'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 task sourcesJar(type: Jar) {
@@ -72,6 +89,12 @@ artifacts {
     archives jar
     archives sourcesJar
 }
+
+testSets {
+    integrationTest
+}
+
+check.dependsOn integrationTest
 
 // Make all tests use JUnit 5
 tasks.withType(Test) {
